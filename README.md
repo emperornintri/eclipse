@@ -22,7 +22,7 @@ The goal of this project is to build a fully functional and efficient MNIST digi
 
 ## Conventions
 
-You will find a detail explanation of every convention used in this project [here](CONVENTIONS).
+You will find a detail explanation of every convention used in this project [here](docs/CONVENTIONS.md).
 
 ## License
 

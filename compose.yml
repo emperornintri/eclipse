@@ -1,6 +1,6 @@
 services:
   developing-environment:
-    build: .
+    build: ./image
     container_name: developing-environment
     volumes:                               # Using a volume to write code outside of the container
       - ./code:/code
