@@ -1,0 +1,7 @@
+services:
+  developing-environment:
+    build: .
+    container_name: developing-environment
+    volumes:                               # Using a volume to write code outside of the container
+      - ./code:/code
+    stdin_open: true                       # Keeping the standard input open so the container does not close
