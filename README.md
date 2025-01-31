@@ -20,6 +20,10 @@ The goal of this project is to build a fully functional and efficient MNIST digi
 
 - For ease of use, everything is build and run inside a container.
 
+## Conventions
+
+You will find a detail explanation of every convention used in this project [here](CONVENTIONS).
+
 ## License
 
 [MIT License](LICENSE)
