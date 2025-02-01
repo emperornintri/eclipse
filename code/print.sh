@@ -1,0 +1,3 @@
+make
+./program
+make clean
