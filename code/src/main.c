@@ -1,8 +1,9 @@
+#include "mathematics.h"
 #include "print.h"
 
-int main()
+int main ()
 {
-  printUnsignedInteger(520);
-  print("\n");
+  printUnsignedInteger (initialGuess(81));
+  print ("\n");
   return 0;
 }

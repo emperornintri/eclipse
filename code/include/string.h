@@ -4,6 +4,8 @@
 #include "constants.h"
 #include "types.h"
 
-size_type getStringLength(const char * string);
+int countTrailingZeros (word_type word);
+int countLeadingZeros (word_type word);
+size_type getStringLength (const char * string);
 
 #endif

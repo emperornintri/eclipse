@@ -12,7 +12,7 @@ static const unsigned int count_trailing_zeroes_table[64] =
   61, 48, 42, 54, 60, 53, 59, 58, 
 };
 
-static inline int countTrailingZeros (word_type word)
+int countTrailingZeros (word_type word)
 {
   if (word == 0)
   { 
@@ -21,20 +21,28 @@ static inline int countTrailingZeros (word_type word)
   return count_trailing_zeroes_table[((word & -word) * 0x0245434CB63AE7BF) >> 58];
 }
 
-static inline word_type repeatBytes(unsigned char byte)
+int countLeadingZeros (word_type word)
+{
+  if (word == 0)
+  {
+    return 64;
+  }
+  word |= (word >> 1);
+  word |= (word >> 2);
+  word |= (word >> 4);
+  word |= (word >> 8);
+  word |= (word >> 16);
+  word |= (word >> 32); 
+  if (word == 0xFFFFFFFFFFFFFFFF){
+    return 0;
+  }
+  word = (word + 1) >> 1;
+  return 63 - count_trailing_zeroes_table[((word & -word) * 0x0245434CB63AE7BF) >> 58];
+}
+
+static inline word_type repeatBytes (unsigned char byte)
 {
   return (((word_type) - 1) / 0xFF) * byte;
-}
-
-static inline word_type shiftWord (word_type word, pointer_as_int string_adress_as_int)
-{
-  return word >> (CHAR_BIT * (string_adress_as_int % sizeof (word_type)));
-}
-
-static inline word_type findAllZeros (word_type word)
-{
-  word_type mask = repeatBytes (0x7F);
-  return ~ (((word & mask) + mask) | word | mask);
 }
 
 static inline word_type findLowestZero (word_type word)
@@ -60,6 +68,17 @@ static inline unsigned int getFirstZeroIndex (word_type word)
 static inline int hasZero (word_type word)
 {
   return findLowestZero (word) != 0;
+}
+
+static inline word_type findAllZeros (word_type word)
+{
+  word_type mask = repeatBytes (0x7F);
+  return ~ (((word & mask) + mask) | word | mask);
+}
+
+static inline word_type shiftWord (word_type word, pointer_as_int string_adress_as_int)
+{
+  return word >> (CHAR_BIT * (string_adress_as_int % sizeof (word_type)));
 }
 
 size_type getStringLength (const char * string)

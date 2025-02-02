@@ -2,7 +2,7 @@
 
 void print (const char * string) 
 {
-  size_type string_length = getStringLength(string);
+  size_type string_length = getStringLength (string);
   asm volatile
   (
     "movq $1, %%rax\n"
@@ -27,12 +27,12 @@ void printInteger (long integer)
     char string[2];
     string[0] = '0';
     string[1] = '\0';
-    print(string);
+    print (string);
     return;
   }
   else if (integer == 0x8000000000000000)
   {
-    print("-9223372036854775808");
+    print ("-9223372036854775808");
     return;
   }
   else if (integer < 0)
@@ -61,7 +61,7 @@ void printInteger (long integer)
   {
     string[0] = '+';
   }
-  print(string);
+  print (string);
   return;
 }
 
@@ -74,7 +74,7 @@ void printUnsignedInteger(unsigned long integer)
     char string[2];
     string[0] = '0';
     string[1] = '\0';
-    print(string);
+    print (string);
     return;
   }
   while (copy != 0)
@@ -91,6 +91,6 @@ void printUnsignedInteger(unsigned long integer)
     integer /= 10;
   }
   string[0] = '+';
-  print(string);
+  print (string);
   return;
 }
