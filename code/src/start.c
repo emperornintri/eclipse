@@ -1,9 +1,9 @@
 #include "exit_program.h"
 
-extern int main ();
+extern int testingPrint ();
 
 void startProgram ()
 {
-  int status = main ();  
+  int status = testingPrint ();  
   exitProgram (status);
 }

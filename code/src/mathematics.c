@@ -95,3 +95,105 @@ double squareRoot (double x, double epsilon)
   }
   return x_guess;
 }
+
+unsigned long truncateInteger (double x)
+{
+  union
+  {
+    double value;
+    long bits;
+  }
+  x_union;
+  x_union.value = x;
+  unsigned int biased_exponent = (x_union.bits & 0x7FF0000000000000) >> 52;
+  if (biased_exponent < 1023)
+  {
+    return 0;
+  }
+  else
+  {
+    int exponent = biased_exponent - 1023;
+    if (exponent >= 52)
+    {
+      x_union.bits = (x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 << exponent - 52;
+      return x_union.bits;
+    }
+    else
+    {
+      x_union.bits = (x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 >> 52 - exponent;
+      return x_union.bits;
+    }
+  }
+}
+
+double truncateFractional (double x)
+{
+  union
+  {
+    double value;
+    unsigned long bits;
+  }
+  x_union;
+  x_union.value = x;
+  long biased_exponent = (x_union.bits & 0x7FF0000000000000) >> 52;
+  if (biased_exponent >= 1075)
+  {
+    return 0;
+  }
+  else
+  {
+    long exponent = biased_exponent - 1023;
+    if (exponent <= - 1)
+    {
+      return x_union.value;
+    }
+    else
+    {
+      x_union.bits = ((x_union.bits & 0x000FFFFFFFFFFFFF) << (12 + exponent + 1)) >> 12;
+      x_union.bits = x_union.bits + (1022L << 52);
+      return x_union.value;
+    }
+  }
+}
+
+unsigned long roundDouble (double x)
+{
+  union
+  {
+    double value;
+    long bits;
+  }
+  x_union;
+  x_union.value = x;
+  unsigned int biased_exponent = (x_union.bits & 0x7FF0000000000000) >> 52;
+  if (biased_exponent < 1023)
+  {
+    if (biased_exponent < 1022)
+    {
+      return 0;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+  else
+  {
+    int exponent = biased_exponent - 1023;
+    if (exponent >= 52)
+    {
+      x_union.bits = (x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 << exponent - 52;
+      return x_union.bits;
+    }
+    else
+    {
+      int carry = 0;
+      if ((((x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 >> (52 - exponent - 1)) << 63) != 0)
+      {
+        carry = 1;
+      }
+      x_union.bits = (x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 >> 52 - exponent;
+      return x_union.bits + carry;
+    }
+  }
+}
