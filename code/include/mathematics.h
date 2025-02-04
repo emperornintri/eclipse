@@ -8,6 +8,6 @@ double initialGuess (double x);
 double squareRoot (double x, double epsilon);
 unsigned long truncateInteger(double x);
 double truncateFractional (double x);
-unsigned long roundDouble (double x);
+long roundDouble (double x);
 
 #endif

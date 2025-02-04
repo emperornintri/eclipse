@@ -129,7 +129,7 @@ void printDouble(double x)
   }
   else if (x < 0)
   {
-    x = -x;
+    x = - x;
     is_negative = 1;
   }
   if ((x_union.bits & 0x7FF0000000000000) >> 52 == 1087)
@@ -139,7 +139,20 @@ void printDouble(double x)
   }
   unsigned long integer_part = truncateInteger (x);
   unsigned long copy = integer_part;
-  unsigned long fractional_part = roundDouble(100000 * truncateFractional (x));
+  unsigned long fractional_part;
+  if (is_negative)
+  {
+    fractional_part = - roundDouble (100000 * truncateFractional (- x));
+    if (fractional_part >= 100000)
+    {
+      fractional_part -= 100000;
+      integer_part += 1;
+    }
+  }
+  else
+  {
+    fractional_part = roundDouble(100000 * truncateFractional (x));
+  }
   while (copy != 0)
   {
     copy /= 10;

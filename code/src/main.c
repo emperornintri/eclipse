@@ -21,18 +21,30 @@ int testingPrint ()
   printDouble (48.541);
   print ("\n"); 
 
-  printDouble (0.541);
+  printDouble (-0.541);
   print ("\n"); 
 
-  printDouble (45002.950);
+  printDouble (-45002.950);
+  print ("\n");
+
+  printDouble ((100*truncateFractional(-45002.950)));
   print ("\n"); 
 
+  printInteger(roundDouble(100000 * truncateFractional(-100*truncateFractional(45002.950))));
+  print ("\n"); 
+  
   printDouble (0.000005);
   print ("\n"); 
 
   printDouble (0.123456789);
   print ("\n"); 
+  
+  printDouble (- 0.123455);
+  print ("\n"); 
 
+  printDouble (roundDouble(- 0.5));
+  print ("\n"); 
+  
   union
   {
     double value;

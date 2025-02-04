@@ -150,13 +150,24 @@ double truncateFractional (double x)
     else
     {
       x_union.bits = ((x_union.bits & 0x000FFFFFFFFFFFFF) << (12 + exponent + 1)) >> 12;
+      if (x_union.bits == 0)
+      {
+        return 0.0f;
+      }
       x_union.bits = x_union.bits + (1022L << 52);
-      return x_union.value;
+      if (x < 0)
+      {
+        return - x_union.value;
+      }
+      else
+      {
+        return x_union.value;
+      }
     }
   }
 }
 
-unsigned long roundDouble (double x)
+long roundDouble (double x)
 {
   union
   {
@@ -174,7 +185,14 @@ unsigned long roundDouble (double x)
     }
     else
     {
-      return 1;
+      if (x >= 0)
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
     }
   }
   else
@@ -183,17 +201,38 @@ unsigned long roundDouble (double x)
     if (exponent >= 52)
     {
       x_union.bits = (x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 << exponent - 52;
-      return x_union.bits;
+      if (x < 0)
+      {
+        return - x_union.bits;
+      }
+      else
+      {
+        return x_union.bits;
+      }
     }
     else
     {
       int carry = 0;
       if ((((x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 >> (52 - exponent - 1)) << 63) != 0)
       {
-        carry = 1;
+        if (x < 0 && ((((x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000) << 63 - (52 - exponent - 1)) == 0x8000000000000000))
+        {
+          carry = 0;
+        }
+        else
+        {
+          carry = 1;
+        }
       }
       x_union.bits = (x_union.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000 >> 52 - exponent;
-      return x_union.bits + carry;
+      if (x < 0)
+      {
+        return - x_union.bits - carry ;
+      }
+      else
+      {
+        return x_union.bits + carry;
+      }
     }
   }
 }
