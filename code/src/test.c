@@ -1,5 +1,5 @@
-#include "mathematics.h"
 #include "print.h"
+#include "random.h"
 
 int testingPrint ()
 {
@@ -74,4 +74,29 @@ int testingPrint ()
   print("This is a final test showcasing the print.\n");
   
   return 0;
+}
+
+int testingRandom()
+{
+  struct xorshift64_state state;
+  xorshift64Initialization(& state);
+  int bin = 100;
+  int result[bin];
+  for (int i = 0; i < bin; i++) {
+        result[i] = 0;
+  }
+  int index;
+  int n = 1000000;
+  double value;
+  for (int i = 0; i < n; i++)
+  {
+    value = ((float) xorshift64(& state)) / ((float) 0xFFFFFFFFFFFFFFFF);
+    index = (int) (bin * value);
+    result[index]++;
+  }
+  for (int i = 0; i < bin; i++)
+  {
+    printInteger(result[i]);
+    print("\n");
+  }
 }
