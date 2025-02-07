@@ -1,13 +1,13 @@
 #include "random.h"
 
-unsigned long getTime()
+unsigned long getTime ()
 {
     unsigned long cycles;
-    asm volatile("rdtsc" : "=A"(cycles));
+    asm volatile ("rdtsc" : "=A"(cycles));
     return cycles;
 }
 
-unsigned long splitmix64(struct splitmix64_state * state)
+unsigned long splitmix64 (struct splitmix64_state * state)
 {
 	unsigned long result = (state->r += 0x9E3779B97f4A7C15);
 	result = (result ^ (result >> 30)) * 0xBF58476D1CE4E5B9;
@@ -15,18 +15,50 @@ unsigned long splitmix64(struct splitmix64_state * state)
 	return result ^ (result >> 31);
 }
 
-void xorshift64Initialization(struct xorshift64_state * state)
+void xorshift64Initialization (struct xorshift64_state * state)
 {
 	struct splitmix64_state splitmix_state = {getTime()};
 	unsigned long temporary = splitmix64(& splitmix_state);
 	state->r = temporary;
 }
 
-unsigned long xorshift64(struct xorshift64_state * state)
+unsigned long xorshift64 (struct xorshift64_state * state)
 {
 	unsigned long x = state->r;
 	x ^= x << 13;
 	x ^= x >> 7;
 	x ^= x << 17;
 	return state->r = x;
+}
+
+double normal(struct xorshift64_state * state, double * result)
+{
+	double v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+	double v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+	double w = v_1 * v_1 + v_2 * v_2;
+	while (w >= 1)
+	{
+		v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+		v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+		w = v_1 * v_1 + v_2 * v_2;
+	}
+	return v_1 * squareRoot(-2 * naturalLogarithm(w) / w, 1e-15);
+}
+
+void normalEfficient(struct xorshift64_state * state, double * result, unsigned int n)
+{
+	for (int index = 0; index < n; index++)
+	{
+		double v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+		double v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+		double w = v_1 * v_1 + v_2 * v_2;
+		while (w >= 1)
+		{
+			v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+			v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+			w = v_1 * v_1 + v_2 * v_2;
+		}
+		result[index * 2 + 0] = v_1 * squareRoot(- 2 * naturalLogarithm(w) / w, 1e-15);
+		result[index * 2 + 1] = v_2 * squareRoot(- 2 * naturalLogarithm(w) / w, 1e-15);
+	}
 }

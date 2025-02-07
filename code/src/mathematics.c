@@ -1,5 +1,34 @@
 #include "mathematics.h"
 
+const double logarithm_2_high = 6.93147180369123816490e-01;    // 0x3FE62E42FEE00000
+const double logarithm_2_low = 1.90821492927058770002e-10;     // 0x3DEA39EF35793C76
+const double logarithm_2_inverse = 1.44269504088896338700e+00; // 0x3FF71547652B82FE
+const int T1[32] = 
+{
+	    0,	1024,	 3062,	5746,	 9193, 13348,	18162, 23592,
+	29598, 36145,	43202, 50740,	58733, 67158,	75992, 85215,
+	83599, 71378,	60428, 50647,	41945, 34246,	27478, 21581,
+	16499, 12183,	 8588,	5674,	 3403,	1742,	  661,	 130
+};
+const double exponential_polynomial_coefficients[5] = 
+{
+  + 1.66666666666666657415e-01,                                // 0x3FC5555555555555         
+  - 2.77777777777777875115e-03,                                // 0xBF66C16C16C16C19
+  + 6.61375661375661555788e-05,                                // 0x3F11566ABC011568
+  - 1.65343915343915139072e-06,                                // 0xBEBBBD779334EF01
+  + 4.17535139757357239171e-08                                 // 0x3E666A8F2BF70E76
+};
+const double logarithm_polynomial_coefficients[7] = 
+{ 
+  + 6.666666666666735130e-01,
+  + 3.999999999940941908e-01,
+  + 2.857142874366239149e-01,
+  + 2.222219843214978396e-01,
+  + 1.818357216161805012e-01,
+  + 1.531383769920937332e-01,
+  + 1.479819860511658591e-01,
+};
+
 double absoluteValue (double x)
 {
   return x > 0 ? x : -x;
@@ -234,5 +263,132 @@ long roundDouble (double x)
         return x_union.bits + carry;
       }
     }
+  }
+}
+
+double multiplyDoubleByPowerOf2 (double x, int n) 
+{
+  union 
+  {
+    double x;
+    unsigned long long bits;
+  } 
+  result;
+  result.x = x; 
+  unsigned int exponent = (result.bits >> 52) & 0x7FF;
+  exponent += n;
+  if ((int) exponent < 1)
+  {
+    result.bits = ((result.bits & 0x000FFFFFFFFFFFFF) + 0x0010000000000000) >> (1 - (int) exponent);
+    if (x < 0)
+    {
+      result.bits = result.bits | 0x8000000000000000;
+    }
+  }
+  else
+  {
+    result.bits = (result.bits & 0x800FFFFFFFFFFFFF) | ((unsigned long long) exponent << 52);
+  }
+  x = result.x;
+  return x;
+}
+
+float exponential (float x) 
+{
+    if (x >= (256 - 1 - 127) * (logarithm_2_high))
+    {
+      return 1.0 / 0.0;
+    }
+    int n;
+    double exponential_component_r, exponential_r, high, low, r, r2;
+    double x_double = (double) x;
+    n = (int) (x_double * logarithm_2_inverse + (x_double < 0 ? - 0.5 : 0.5));
+    high = x_double - n * logarithm_2_high;
+    low = n * logarithm_2_low;
+    r = high - low;
+    r2 = r * r;
+    exponential_component_r = r - r2 * (exponential_polynomial_coefficients[0] + 
+                                  r2 * (exponential_polynomial_coefficients[1] + 
+                                  r2 * (exponential_polynomial_coefficients[2] + 
+                                  r2 * (exponential_polynomial_coefficients[3] + 
+                                  r2 * (exponential_polynomial_coefficients[4])))));
+    exponential_r = 1 - (low - (r * exponential_component_r) / (2.0 - exponential_component_r) - high);
+    return (float) multiplyDoubleByPowerOf2 (exponential_r, n);
+}
+
+float naturalLogarithm (float x)
+{
+  if (x <= 0)
+  {
+    return - 1.0 / 0.0;
+  }
+  int i, k, x_high;
+  double k_double, f, half_f_square, s, R, t1, t2, w, z;
+  double x_double = (double) x;  
+  k = 0;
+  x_high = * (1 + (int * ) & x_double);
+  k += (x_high >> 20) - 1023;
+  x_high &= 0x000fffff;
+  i = (x_high + 0x95f64) & 0x100000;
+	* (1 + (int * ) & x_double) = x_high | (i ^ 0x3ff00000);
+	k += (i >> 20);
+	f = x_double - 1.0;
+ 	s = f / (2.0 + f); 
+	k_double = (double) k;
+	z = s * s;
+	w = z * z;
+	t1 = w * (logarithm_polynomial_coefficients[1] + 
+       w * (logarithm_polynomial_coefficients[3] + 
+       w * logarithm_polynomial_coefficients[5])); 
+	t2 = z * (logarithm_polynomial_coefficients[0] + 
+       w * (logarithm_polynomial_coefficients[2] + 
+       w * (logarithm_polynomial_coefficients[4] + 
+       w * logarithm_polynomial_coefficients[6]))); 
+	R = t2 + t1;
+  half_f_square = 0.5 * f * f;
+  return k_double * logarithm_2_high - ((half_f_square - (s * (half_f_square + R) + k_double * logarithm_2_low)) - f);
+}
+
+float rectifiedLinearUnit (float x)
+{
+  return (x > 0) ? x : 0;
+}
+
+float identity (float x)
+{
+  return x;
+}
+
+float maximum (float x, float y)
+{
+  return (x > y) ? x : y;
+}
+
+float minimum (float x, float y)
+{
+  return (x < y) ? x : y;
+}
+
+void softmax (int size, float * logits, float * probabilities)
+{
+
+  float max_logit, sum;
+  sum = 1e-8f;
+  max_logit = logits[0];
+  for (int logits_index = 1; logits_index < size; logits_index++) 
+  {
+    if (logits[logits_index] > max_logit)
+    {
+      max_logit = logits[logits_index];
+    }
+  }
+  for (int logits_index = 0; logits_index < size; logits_index++)
+  {
+    probabilities[logits_index] = exponential(logits[logits_index] - max_logit);
+    sum += probabilities[logits_index];
+  }
+  for (int logits_index = 0; logits_index < size; logits_index++)
+  {
+    probabilities[logits_index] /= sum;
   }
 }

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -nostdlib -I include
+CFLAGS = -nostdlib -I include -Wno-builtin-declaration-mismatch
 ENTRY = startProgram
 TARGET = program
 SRC = $(wildcard src/*.c)

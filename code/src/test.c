@@ -1,3 +1,4 @@
+#include "mnist_dataset.h"
 #include "print.h"
 #include "random.h"
 
@@ -99,4 +100,12 @@ int testingRandom()
     printInteger(result[i]);
     print("\n");
   }
+  return 0;
+}
+
+int testingMNISTData()
+{
+  struct dataset MNIST;
+  readImages ("/code/data/train-images-idx3-ubyte", & MNIST);
+  displayImage (& MNIST, 0);
 }

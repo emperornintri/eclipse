@@ -62,7 +62,7 @@ void printInteger (long integer)
   return;
 }
 
-void printUnsignedInteger(unsigned long integer)
+void printUnsignedInteger (unsigned long integer)
 {
   unsigned long copy = integer;
   int number_of_digits = 0;
@@ -76,20 +76,19 @@ void printUnsignedInteger(unsigned long integer)
     copy /= 10;
     number_of_digits++;
   }
-  char string[number_of_digits + 2];
-  string[number_of_digits + 1] = '\0';
-  int index = number_of_digits;
+  char string[number_of_digits + 1];
+  string[number_of_digits] = '\0';
+  int index = number_of_digits - 1;
   while (integer != 0)
   {
     string[index--] = (integer % 10) + '0';
     integer /= 10;
   }
-  string[0] = '+';
   print (string);
   return;
 }
 
-void printDouble(double x)
+void printDouble (double x)
 {
   int is_fractional = 0;
   int is_negative = 0;
@@ -151,7 +150,7 @@ void printDouble(double x)
   }
   else
   {
-    fractional_part = roundDouble(100000 * truncateFractional (x));
+    fractional_part = roundDouble (100000 * truncateFractional (x));
   }
   while (copy != 0)
   {
