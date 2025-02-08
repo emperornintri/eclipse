@@ -31,31 +31,31 @@ unsigned long xorshift64 (struct xorshift64_state * state)
 	return state->r = x;
 }
 
-double normal(struct xorshift64_state * state, double * result)
+double normal(struct xorshift64_state * state)
 {
-	double v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
-	double v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+	double v_1 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+	double v_2 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
 	double w = v_1 * v_1 + v_2 * v_2;
 	while (w >= 1)
 	{
-		v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
-		v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+		v_1 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+		v_2 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
 		w = v_1 * v_1 + v_2 * v_2;
 	}
 	return v_1 * squareRoot(-2 * naturalLogarithm(w) / w, 1e-15);
 }
 
-void normalEfficient(struct xorshift64_state * state, double * result, unsigned int n)
+void normalDoubleEfficient(struct xorshift64_state * state, double * result, unsigned int n)
 {
 	for (int index = 0; index < n; index++)
 	{
-		double v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
-		double v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+		double v_1 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+		double v_2 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
 		double w = v_1 * v_1 + v_2 * v_2;
 		while (w >= 1)
 		{
-			v_1 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
-			v_2 = ((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF));
+			v_1 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+			v_2 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
 			w = v_1 * v_1 + v_2 * v_2;
 		}
 		result[index * 2 + 0] = v_1 * squareRoot(- 2 * naturalLogarithm(w) / w, 1e-15);

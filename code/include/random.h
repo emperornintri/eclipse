@@ -13,5 +13,7 @@ struct xorshift64_state {
 
 void xorshift64Initialization (struct xorshift64_state * state);
 unsigned long xorshift64 (struct xorshift64_state * state);
+double normal(struct xorshift64_state * state);
+void normalDoubleEfficient(struct xorshift64_state * state, double * result, unsigned int n);
 
 #endif

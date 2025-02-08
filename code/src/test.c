@@ -100,7 +100,50 @@ int testingRandom()
     printInteger(result[i]);
     print("\n");
   }
+  for (int i = 0; i < 10; i++)
+  {
+    printDouble(normal(& state));
+    print("\n");
+  }
   return 0;
+}
+
+int testingNormal()
+{
+  struct xorshift64_state state;
+  xorshift64Initialization(& state);
+  int sample_number = 10000;
+  int star_number = 100;
+  int distribution[10];
+  for (int i = 0; i < 10; i++)
+  {
+    distribution[i] = 0;
+  }
+  for (int i = 0; i < sample_number; i++)
+  {
+    double number = 5.0 + 2.0 * normal(& state);
+    if ((number >= 0.0) && (number < 10.0))
+    {
+      distribution[(int) number]++;
+    }
+  }
+  for (int i = 0; i < 10; i++)
+  {
+    printUnsignedInteger(i);
+    print(" to");
+    if (i < 9)
+    {
+      print(" ");
+    }
+    print(" ");
+    printUnsignedInteger(i + 1);
+    print(": ");
+    for (int j = 0; j < distribution[i] * star_number / sample_number; j++)
+    {
+      print("*");
+    }
+    print("\n");
+  }
 }
 
 int testingMNISTData()
@@ -113,10 +156,11 @@ int testingMNISTData()
   displayImage (& X_train, 0);
   print("The label is:\n");
   printUnsignedInteger (y_train.samples[0]);
-  print("\n");
   print("The image is:\n");
   displayImage (& X_train, 59999);
   print("The label is:\n");
   printUnsignedInteger (y_train.samples[59999]);
   print("\n");
+  free(X_train.samples);
+  free(y_train.samples);
 }
