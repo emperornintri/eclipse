@@ -105,7 +105,18 @@ int testingRandom()
 
 int testingMNISTData()
 {
-  struct dataset MNIST;
-  readImages ("/code/data/train-images-idx3-ubyte", & MNIST);
-  displayImage (& MNIST, 0);
+  struct dataset2D X_train;
+  struct dataset1D y_train;
+  readImages ("/code/data/train-images-idx3-ubyte", & X_train);
+  readLabels ("/code/data/train-labels-idx1-ubyte", & y_train);
+  print("The image is:\n");
+  displayImage (& X_train, 0);
+  print("The label is:\n");
+  printUnsignedInteger (y_train.samples[0]);
+  print("\n");
+  print("The image is:\n");
+  displayImage (& X_train, 59999);
+  print("The label is:\n");
+  printUnsignedInteger (y_train.samples[59999]);
+  print("\n");
 }

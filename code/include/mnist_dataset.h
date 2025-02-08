@@ -4,17 +4,10 @@
 #include "file.h"
 #include "memory.h"
 #include "print.h"
+#include "structures.h"
 
-struct dataset
-{
-  float * samples;
-  int row_count;
-  int column_count;
-  int channel_count;
-  int sample_count;
-};
-
-void readImages (const char * filename, struct dataset * dataset_images);
-void displayImage (struct dataset * images, int image);
+void readImages (const char * filename, dataset2D * dataset_images);
+void readLabels (const char * filename, dataset1D * dataset_labels);
+void displayImage (dataset2D * images, int image);
 
 #endif

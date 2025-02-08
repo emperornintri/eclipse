@@ -11,7 +11,7 @@ int swapBytes (int value)
   );
 }
 
-void readImages (const char * filename, struct dataset * dataset_images)
+void readImages (const char * filename, dataset2D * dataset_images)
 {
   long bytesRead;
   long file_descriptor;
@@ -30,19 +30,53 @@ void readImages (const char * filename, struct dataset * dataset_images)
 
   int data_size = dataset_images->sample_count * dataset_images->row_count * dataset_images->column_count;
   unsigned char * data_buffer = malloc (data_size);
-
+  print("Firt Data Buffer adress: ");
+  printUnsignedInteger((unsigned long int) data_buffer);
+  print("\n\n");
   readFile (data_size, data_buffer, & file_descriptor, & bytesRead);
   closeFile (file_descriptor);
 
-  dataset_images->samples = (float * ) malloc (sizeof(float) * data_size);;
+  dataset_images->samples = (float * ) malloc (sizeof(float) * data_size);
+  print("Dataset Images Samples adress: ");
+  printUnsignedInteger((unsigned long int) dataset_images->samples);
+  print("\n\n");
   for (int i = 0; i < data_size; i++)
   {
     dataset_images->samples[i] = (float) data_buffer[i];
   }
+  free(data_buffer);
   return;
 }
 
-void displayImage (struct dataset * images, int image)
+void readLabels (const char * filename, dataset1D * dataset_labels)
+{
+  long bytesRead;
+  long file_descriptor;
+  char magic_number_buffer[4];
+
+  openFile (filename, & file_descriptor, 0, 0);
+  readFile (4, magic_number_buffer, & file_descriptor, & bytesRead);
+
+  char dimensions_buffer[4];
+  readFile (4, dimensions_buffer, & file_descriptor, & bytesRead);
+  dataset_labels->sample_count = swapBytes (((int * ) dimensions_buffer)[0]);
+  dataset_labels->column_count = 1;
+  unsigned char * data_buffer = malloc (dataset_labels->sample_count);
+
+  readFile (dataset_labels->sample_count, data_buffer, & file_descriptor, & bytesRead);
+  closeFile (file_descriptor);
+
+  dataset_labels->samples = (float * ) malloc (sizeof(float) * dataset_labels->sample_count);
+  for (int i = 0; i < dataset_labels->sample_count; i++)
+  {
+    dataset_labels->samples[i] = (float) data_buffer[i];
+  }
+  free(data_buffer);
+  return;
+}
+
+
+void displayImage (dataset2D * images, int image)
 {
   int current_pixel;
   int coordinate = image * images->row_count * images->column_count;

@@ -1,6 +1,6 @@
 #include "memory.h"
 
-static Block *free_list = 0;
+static Block * free_list = 0;
 
 Block * request_memory (unsigned long int size)
 {
@@ -97,7 +97,7 @@ void free (void * ptr)
   Block * current = free_list;
   while (current) 
   {
-    if (current->is_free && current->next && current->next->is_free)
+    if (current->is_free && current->next && current->next->is_free && (char * ) current + sizeof (Block) + current->size == (char * ) current->next)
     {
       current->size += current->next->size + sizeof (Block);
       current->next = current->next->next;

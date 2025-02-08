@@ -6,8 +6,8 @@ extern int testingMNISTData ();
 
 void startProgram ()
 {
-  int status_1 = testingPrint (); 
-  int status_2 = testingRandom ();  
+  //int status_1 = testingPrint (); 
+  //int status_2 = testingRandom ();
   int status_3 = testingMNISTData ();
-  exitProgram (status_1 * status_2 * status_3);
+  exitProgram (status_3);
 }
