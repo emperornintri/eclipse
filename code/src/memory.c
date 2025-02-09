@@ -69,8 +69,8 @@ void * malloc (unsigned long int size)
       current->is_free = 0;
       return (char * ) current + sizeof (Block);
     }
-  previous = current;
-  current = current->next;
+    previous = current;
+    current = current->next;
   }
   Block * new_block = request_memory (size);
   if (!new_block)

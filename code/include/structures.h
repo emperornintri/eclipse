@@ -3,8 +3,9 @@
 
 typedef struct convolutionalLayer
 {
+  int input_channel;
   int filter_size;
-  int filter_count;
+  int output_channel;
   int padding;
   int stride;
   float * biases;
@@ -51,5 +52,17 @@ typedef struct dataset2D
   int channel_count;
 }
 dataset2D;
+
+typedef struct LeNet5
+{
+  struct convolutionalLayer c1;
+  struct poolingLayer s2;
+  struct convolutionalLayer c3;
+  struct poolingLayer s4;
+  struct denseLayer c5;
+  struct denseLayer f6;
+  struct denseLayer output;
+}
+LeNet5;
 
 #endif

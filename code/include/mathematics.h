@@ -22,6 +22,8 @@ float naturalLogarithm (float x);
 float maximum (float x, float y);
 float minimum (float x, float y);
 float rectifiedLinearUnit (float x);
+float rectifiedLinearUnitPrime (float x);
 float identity (float x);
+float identityPrime (float x);
 void softmax (int size, float * logits, float * predictions);
 #endif

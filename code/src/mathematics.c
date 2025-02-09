@@ -354,9 +354,19 @@ float rectifiedLinearUnit (float x)
   return (x > 0) ? x : 0;
 }
 
+float rectifiedLinearUnitPrime (float x)
+{
+  return (x > 0) ? 1 : 0;
+}
+
 float identity (float x)
 {
   return x;
+}
+
+float identityPrime (float x)
+{
+  return 1;
 }
 
 float maximum (float x, float y)

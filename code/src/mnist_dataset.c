@@ -69,34 +69,20 @@ void readLabels (const char * filename, dataset1D * dataset_labels)
   return;
 }
 
-
-void displayImage (dataset2D * images, int image)
+void batchImages(int batch_size, int batch_index, dataset2D * dataset_images, dataset2D * batched_images)
 {
-  int current_pixel;
-  int coordinate = image * images->row_count * images->column_count;
-  for (int row = 0; row < images->row_count; row++)
+  int size;
+  if (dataset_images->sample_count - batch_size * batch_index < batch_size)
   {
-    for (int column = 0; column < images->column_count; column++)
-    {
-      current_pixel = images->samples[row * 28 + column + coordinate];
-      if (current_pixel < 10)
-      {
-        print("  ");
-        printUnsignedInteger(current_pixel);
-        print(" ");
-      }
-      else if ((current_pixel >= 10) && (current_pixel < 100))
-      {
-        print(" ");
-        printUnsignedInteger(current_pixel);
-        print(" ");       
-      }
-      else
-      {
-        printUnsignedInteger(current_pixel);
-        print(" ");   
-      }
-    }
-    print("\n");
+    size = dataset_images->sample_count - batch_size * batch_index;
   }
+  else
+  {
+    size = batch_size;
+  }
+  batched_images->samples = dataset_images->samples + batch_index * batch_size * dataset_images->row_count * dataset_images->column_count * dataset_images->channel_count;
+  batched_images->sample_count = size;
+  batched_images->row_count = dataset_images->row_count;
+  batched_images->column_count = dataset_images->column_count;
+  batched_images->channel_count = dataset_images->channel_count;
 }

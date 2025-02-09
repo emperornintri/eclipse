@@ -62,3 +62,21 @@ void normalDoubleEfficient(struct xorshift64_state * state, double * result, uns
 		result[index * 2 + 1] = v_2 * squareRoot(- 2 * naturalLogarithm(w) / w, 1e-15);
 	}
 }
+
+void normalFloatEfficient(struct xorshift64_state * state, float * result, unsigned int n, double mean, double standard_deviation)
+{
+	for (int index = 0; index < n; index++)
+	{
+		double v_1 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+		double v_2 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+		double w = v_1 * v_1 + v_2 * v_2;
+		while (w >= 1)
+		{
+			v_1 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+			v_2 = 2 * (((double) xorshift64(state)) / ((double) (0xFFFFFFFFFFFFFFFF))) - 1;
+			w = v_1 * v_1 + v_2 * v_2;
+		}
+		result[index * 2 + 0] = (float) (mean + standard_deviation * (v_1 * squareRoot(- 2 * naturalLogarithm(w) / w, 1e-15)));
+		result[index * 2 + 1] = (float) (mean + standard_deviation * (v_2 * squareRoot(- 2 * naturalLogarithm(w) / w, 1e-15)));
+	}
+}
