@@ -8,5 +8,6 @@
 #include "structures.h"
 
 void training(float learning_rate, int batch_size, int epochs, LeNet5 * network, dataset2D * X_train, dataset1D * y_train);
+void test(LeNet5 * network, dataset2D * X_test, dataset1D * y_test);
 
 #endif

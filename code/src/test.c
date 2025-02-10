@@ -298,8 +298,8 @@ int testingForwardBackward()
 
 int testingTrain()
 {
-  float learning_rate = 0.001;
-  int batch_size = 64;
+  float learning_rate = 0.01;
+  int batch_size = 32;
   int epochs = 10;
 
   LeNet5 network;
@@ -316,4 +316,12 @@ int testingTrain()
   }
 
   training(learning_rate, batch_size, epochs, & network, & X_train, & y_train);
+
+  dataset2D X_test;
+  dataset1D y_test;
+
+  readImages ("/code/data/t10k-images-idx3-ubyte", & X_test);
+  readLabels ("/code/data/t10k-labels-idx1-ubyte", & y_test);
+
+  test(& network, & X_test, & y_test);
 }

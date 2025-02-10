@@ -97,7 +97,7 @@ void training(float learning_rate, int batch_size, int epochs, LeNet5 * network,
       loss = crossEntropyLoss(& output, & labels);
       loss_global += loss;
 
-      if (batch%100 == 0)
+      if (batch%30 == 0)
       {
         print("Batch ");
         printUnsignedInteger(batch);
@@ -114,6 +114,26 @@ void training(float learning_rate, int batch_size, int epochs, LeNet5 * network,
     printDouble(loss_global / (float) (stop * batch_size));
     print(" Accuracy: ");
     printDouble(100 * (double) count_correct_global / (double) (stop * batch_size));
-    print("%.\n");
+    print("%.\n\n");
   }
+}
+
+void test(LeNet5 * network, dataset2D * X_test, dataset1D * y_test)
+{
+  dataset2D input_2d_2;
+  dataset2D input_2d_3;
+  dataset2D input_2d_4;
+  dataset2D input_2d_5;
+  dataset1D input_1d_1;
+  dataset1D input_1d_2;
+  dataset1D input_1d_3;
+  dataset1D output;
+
+  forwardLeNet5 (network, X_test, & input_2d_2, & input_2d_3, & input_2d_4, & input_2d_5, & input_1d_1, & input_1d_2, & input_1d_3, & output);
+
+  int count_correct = countCorrect(& output, y_test);
+
+  print("On the test data, we have an accuracy of: ");
+  printDouble(100 * (double) count_correct  / (double) (X_test->sample_count));
+  print("%.\n\n");
 }
