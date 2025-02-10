@@ -1,6 +1,7 @@
-#ifndef EXIT_PROGRAM_H
-#define EXIT_PROGRAM_H
+#ifndef MATHEMATICS_H
+#define MATHEMATICS_H
 
+#include "print.h"
 #include "string.h"
 
 extern const double logarithm_2_high;
@@ -26,4 +27,9 @@ float rectifiedLinearUnitPrime (float x);
 float identity (float x);
 float identityPrime (float x);
 void softmax (int size, float * logits, float * predictions);
+void softmaxDebug (int size, float * logits, float * predictions);
+int floor(double x);
+int ceiling(double x);
+int argmax (float * values, int size);
+
 #endif

@@ -108,7 +108,7 @@ double squareRoot (double x, double epsilon)
   {
     return 0;
   }
-  else if (x_bits & 0x7FF0000000000000 == 0x7FF0000000000000)
+  else if ((x_bits & 0x7FF0000000000000) == 0x7FF0000000000000)
   {
     return x;
   }
@@ -178,20 +178,8 @@ double truncateFractional (double x)
     }
     else
     {
-      x_union.bits = ((x_union.bits & 0x000FFFFFFFFFFFFF) << (12 + exponent + 1)) >> 12;
-      if (x_union.bits == 0)
-      {
-        return 0.0f;
-      }
-      x_union.bits = x_union.bits + (1022L << 52);
-      if (x < 0)
-      {
-        return - x_union.value;
-      }
-      else
-      {
-        return x_union.value;
-      }
+      x_union.bits = (x_union.bits >> (52 - exponent)) << (52 - exponent);
+      return x - x_union.value;
     }
   }
 }
@@ -401,4 +389,62 @@ void softmax (int size, float * logits, float * probabilities)
   {
     probabilities[logits_index] /= sum;
   }
+}
+
+void softmaxDebug (int size, float * logits, float * probabilities)
+{
+  for (int i = 0; i < 10; i++)
+  {
+    printUnsignedInteger(* ((unsigned * ) & logits[i]));
+    print("\n");
+  }
+  float max_logit, sum;
+  sum = 1e-8f;
+  max_logit = logits[0];
+  for (int logits_index = 1; logits_index < size; logits_index++) 
+  {
+    if (logits[logits_index] > max_logit)
+    {
+      max_logit = logits[logits_index];
+    }
+  }
+  for (int logits_index = 0; logits_index < size; logits_index++)
+  {
+    probabilities[logits_index] = exponential(logits[logits_index] - max_logit);
+    sum += probabilities[logits_index];
+  }
+  for (int logits_index = 0; logits_index < size; logits_index++)
+  {
+    probabilities[logits_index] /= sum;
+  }
+}
+
+int floor(double x)
+{
+  if (x < 0 && x != (int) x)
+  {
+    return (int) x - 1;
+  }
+  else
+  {
+    return (int) x;
+  }
+}
+
+int ceiling(double x)
+{
+  return -floor(-x);
+}
+
+int argmax (float * values, int size)
+{
+  int argmax = 0;
+  for (int i = 1; i < size; i++)
+  {
+    if (values[i] > values[argmax])
+    {
+      argmax = i;
+    }
+  }
+  return argmax;
 }

@@ -1,19 +1,26 @@
 #include "exit_program.h"
+#include "print.h"
 
 extern int testingPrint ();
 extern int testingRandom ();
 extern int testingNormal ();
+extern int testingNormalBis ();
 extern int testingMNISTData ();
 extern int testingConvolution();
-extern int testingForward();
+extern int testingForwardBackward();
+extern int testingTrain();
 
 void startProgram ()
 {
-  //int status_1 = testingPrint (); 
-  //int status_2 = testingRandom ();
-  //int status_3 = testingNormal ();
-  //int status_4 = testingMNISTData ();
-  //int status_5 = testingConvolution();
-  int status_6 = testingForward();
-  exitProgram (status_6);
+  // testingPrint (); 
+  // testingRandom ();
+  // testingNormal ();
+  // testingNormalBis ();
+  // testingMNISTData ();
+  // testingConvolution ();
+  // testingForwardBackward ();
+  // testingTrain ();
+
+  int status = testingTrain ();
+  exitProgram (0);
 }

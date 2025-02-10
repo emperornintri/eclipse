@@ -5,13 +5,14 @@
 #include "network.h"
 #include "print.h"
 #include "random.h"
+#include "training.h"
 
 int testingPrint ()
 {
   printUnsignedInteger (truncateInteger(452.750));
   print ("\n");
 
-  printUnsignedInteger (truncateFractional(45002.950));
+  printDouble (truncateFractional(45002.950));
   print ("\n");
 
   printUnsignedInteger (truncateInteger(1000 * truncateFractional(45002.950)));
@@ -35,7 +36,8 @@ int testingPrint ()
   printDouble ((100*truncateFractional(-45002.950)));
   print ("\n"); 
 
-  printInteger(roundDouble(100000 * truncateFractional(-100*truncateFractional(45002.950))));
+  double test = truncateFractional(45002.950);
+  printInteger( * ((long *) (& test)));
   print ("\n"); 
   
   printDouble (0.000005);
@@ -50,6 +52,9 @@ int testingPrint ()
   printDouble (roundDouble(- 0.5));
   print ("\n"); 
   
+  printDouble (truncateFractional(-1.2401943));
+  print ("\n");
+
   union
   {
     double value;
@@ -150,6 +155,20 @@ int testingNormal()
   }
 }
 
+int testingNormalBis()
+{
+  struct xorshift64_state state;
+  xorshift64Initialization(& state);
+  int sample_number = 100;
+  for (int i = 0; i < sample_number; i++)
+  {
+    printDouble(normal(& state));
+    print("\n");
+  } //*/
+  //printDouble(squareRoot(78.79325, 1e-15));
+  //print("\n");
+}
+
 int testingMNISTData()
 {
   dataset2D X_train;
@@ -202,10 +221,15 @@ int testingConvolution()
   }
 }
 
-int testingForward()
+int testingForwardBackward()
 {
-  dataset2D input;
-  dataset2D input_batched;
+  dataset2D X_train;
+  dataset1D y_train;
+
+  float learning_rate;
+  LeNet5 network;
+  dataset1D labels;
+  dataset2D input_2d_1;
   dataset2D input_2d_2;
   dataset2D input_2d_3;
   dataset2D input_2d_4;
@@ -214,11 +238,25 @@ int testingForward()
   dataset1D input_1d_2;
   dataset1D input_1d_3;
   dataset1D output;
-  readImages ("/code/data/train-images-idx3-ubyte", & input);
-  batchImages(32, 0, & input, & input_batched);
-  LeNet5 network;
-  initializeLeNet5(& network);
-  forwardLeNet5(& network, & input_batched, & input_2d_2, & input_2d_3, & input_2d_4, & input_2d_5, & input_1d_1, & input_1d_2, & input_1d_3, & output);
+  dataset2D input_2d_1_gradients; 
+  dataset2D input_2d_2_gradients; 
+  dataset2D input_2d_3_gradients; 
+  dataset2D input_2d_4_gradients; 
+  dataset2D input_2d_5_gradients;
+  dataset1D input_1d_1_gradients; 
+  dataset1D input_1d_2_gradients; 
+  dataset1D input_1d_3_gradients; 
+  dataset1D output_gradients;
+
+  learning_rate = 0.01;
+  network.c1;
+  initializeLeNet5 (& network);
+  readLabels ("/code/data/train-labels-idx1-ubyte", & y_train);
+  readImages ("/code/data/train-images-idx3-ubyte", & X_train);
+  batchLabels (32, 0, & y_train, & labels);
+  batchImages (32, 0, & X_train, & input_2d_1);
+
+  forwardLeNet5 (& network, & input_2d_1, & input_2d_2, & input_2d_3, & input_2d_4, & input_2d_5, & input_1d_1, & input_1d_2, & input_1d_3, & output);
   for (int i = 0; i < 32; i++)
   {
     print("For the ");
@@ -231,4 +269,51 @@ int testingForward()
     }
     print("\n\n\n");
   }
+
+  backwardLeNet5
+  (
+    learning_rate,
+    & network, 
+    & labels,
+    & input_2d_1, 
+    & input_2d_2, 
+    & input_2d_3, 
+    & input_2d_4, 
+    & input_2d_5,
+    & input_1d_1, 
+    & input_1d_2, 
+    & input_1d_3, 
+    & output,
+    & input_2d_1_gradients, 
+    & input_2d_2_gradients, 
+    & input_2d_3_gradients, 
+    & input_2d_4_gradients, 
+    & input_2d_5_gradients,
+    & input_1d_1_gradients, 
+    & input_1d_2_gradients, 
+    & input_1d_3_gradients, 
+    & output_gradients
+  );
+}
+
+int testingTrain()
+{
+  float learning_rate = 0.001;
+  int batch_size = 64;
+  int epochs = 10;
+
+  LeNet5 network;
+  initializeLeNet5 (& network);
+
+  dataset2D X_train;
+  dataset1D y_train;
+  readImages ("/code/data/train-images-idx3-ubyte", & X_train);
+  readLabels ("/code/data/train-labels-idx1-ubyte", & y_train);
+  
+  for (int i = 0; i < X_train.sample_count * X_train.row_count * X_train.column_count * X_train.channel_count; i++)
+  {
+    X_train.samples[i] /= 255.0f;
+  }
+
+  training(learning_rate, batch_size, epochs, & network, & X_train, & y_train);
 }

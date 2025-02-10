@@ -54,19 +54,35 @@ void readLabels (const char * filename, dataset1D * dataset_labels)
   char dimensions_buffer[4];
   readFile (4, dimensions_buffer, & file_descriptor, & bytesRead);
   dataset_labels->sample_count = swapBytes (((int * ) dimensions_buffer)[0]);
-  dataset_labels->column_count = 1;
+  dataset_labels->column_count = 10;
   unsigned char * data_buffer = malloc (dataset_labels->sample_count);
 
   readFile (dataset_labels->sample_count, data_buffer, & file_descriptor, & bytesRead);
   closeFile (file_descriptor);
 
-  dataset_labels->samples = (float * ) malloc (sizeof(float) * dataset_labels->sample_count);
+  dataset_labels->samples = (float * ) calloc (dataset_labels->column_count * dataset_labels->sample_count, sizeof(float));
   for (int i = 0; i < dataset_labels->sample_count; i++)
   {
-    dataset_labels->samples[i] = (float) data_buffer[i];
+    dataset_labels->samples[i * dataset_labels->column_count + (int) data_buffer[i]] = 1;
   }
   free(data_buffer);
   return;
+}
+
+void batchLabels(int batch_size, int batch_index, dataset1D * dataset_labels, dataset1D * batched_labels)
+{
+  int size;
+  if (dataset_labels->sample_count - batch_size * batch_index < batch_size)
+  {
+    size = dataset_labels->sample_count - batch_size * batch_index;
+  }
+  else
+  {
+    size = batch_size;
+  }
+  batched_labels->samples = dataset_labels->samples + batch_index * batch_size * dataset_labels->column_count;
+  batched_labels->sample_count = size;
+  batched_labels->column_count = dataset_labels->column_count;
 }
 
 void batchImages(int batch_size, int batch_index, dataset2D * dataset_images, dataset2D * batched_images)

@@ -2,6 +2,7 @@
 #define RANDOM_H
 
 #include "mathematics.h"
+#include "print.h"
 
 struct splitmix64_state {
 	unsigned long r;
