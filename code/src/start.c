@@ -21,6 +21,6 @@ void startProgram ()
   // testingForwardBackward ();
   // testingTrain ();
 
-  int status = testingMNISTData ();
+  int status = testingTrain ();
   exitProgram (0);
 }
