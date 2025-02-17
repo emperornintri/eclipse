@@ -1,7 +1,6 @@
 #ifndef MATHEMATICS_H
 #define MATHEMATICS_H
 
-#include "print.h"
 #include "string.h"
 
 extern const double logarithm_2_high;

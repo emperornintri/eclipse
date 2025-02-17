@@ -6,7 +6,7 @@
 #include "structures.h"
 #include "layers.h"
 
-void initializeLeNet5(LeNet5 * network);
+void initializeLeNet5(LeNet5 * network, int resized);
 void freeLeNet5(LeNet5 * network);
 void forwardLeNet5
 (

@@ -175,14 +175,13 @@ int testingMNISTData()
   dataset1D y_train;
   readImages ("/code/data/train-images-idx3-ubyte", & X_train);
   readLabels ("/code/data/train-labels-idx1-ubyte", & y_train);
-  print("The image is:\n");
+  normalizeImages(& X_train);
+  resizeImages(& X_train, 32, 32);
+  denormalizeImages(& X_train);
+  print("The first image is:\n");
   displayImage (& X_train, 0, 0);
-  print("The label is:\n");
-  printUnsignedInteger (y_train.samples[0]);
-  print("\nThe image is:\n");
+  print("\nThe last image is:\n");
   displayImage (& X_train, 59999, 0);
-  print("The label is:\n");
-  printUnsignedInteger (y_train.samples[59999]);
   print("\n");
   free(X_train.samples);
   free(y_train.samples);
@@ -250,7 +249,7 @@ int testingForwardBackward()
 
   learning_rate = 0.01;
   network.c1;
-  initializeLeNet5 (& network);
+  initializeLeNet5 (& network, 0);
   readLabels ("/code/data/train-labels-idx1-ubyte", & y_train);
   readImages ("/code/data/train-images-idx3-ubyte", & X_train);
   batchLabels (32, 0, & y_train, & labels);
@@ -299,21 +298,19 @@ int testingForwardBackward()
 int testingTrain()
 {
   float learning_rate = 0.01;
-  int batch_size = 32;
+  int batch_size = 100;
   int epochs = 10;
 
   LeNet5 network;
-  initializeLeNet5 (& network);
+  initializeLeNet5 (& network, 1);
 
   dataset2D X_train;
   dataset1D y_train;
   readImages ("/code/data/train-images-idx3-ubyte", & X_train);
   readLabels ("/code/data/train-labels-idx1-ubyte", & y_train);
   
-  for (int i = 0; i < X_train.sample_count * X_train.row_count * X_train.column_count * X_train.channel_count; i++)
-  {
-    X_train.samples[i] /= 255.0f;
-  }
+  normalizeImages(& X_train);
+  resizeImages(& X_train, 32, 32);
 
   training(learning_rate, batch_size, epochs, & network, & X_train, & y_train);
 

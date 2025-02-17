@@ -1,8 +1,15 @@
 #include "network.h"
 
-void initializeLeNet5(LeNet5 * network)
+void initializeLeNet5(LeNet5 * network, int resized)
 {
-  initializeConvolutionalLayer(& network->c1, 1, 5, 6, 2, 1, rectifiedLinearUnit, rectifiedLinearUnitPrime);
+  if (resized)
+  {
+    initializeConvolutionalLayer(& network->c1, 1, 5, 6, 0, 1, rectifiedLinearUnit, rectifiedLinearUnitPrime);
+  }
+  else
+  {
+    initializeConvolutionalLayer(& network->c1, 1, 5, 6, 2, 1, rectifiedLinearUnit, rectifiedLinearUnitPrime);
+  }
   initializePoolingLayer(& network->s2, 2, 0, 2, 0);
   initializeConvolutionalLayer(& network->c3, 6, 5, 16, 0, 1, rectifiedLinearUnit, rectifiedLinearUnitPrime);
   initializePoolingLayer(& network->s4, 2, 0, 2, 0);

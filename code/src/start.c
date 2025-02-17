@@ -6,9 +6,9 @@ extern int testingRandom ();
 extern int testingNormal ();
 extern int testingNormalBis ();
 extern int testingMNISTData ();
-extern int testingConvolution();
-extern int testingForwardBackward();
-extern int testingTrain();
+extern int testingConvolution ();
+extern int testingForwardBackward ();
+extern int testingTrain ();
 
 void startProgram ()
 {
@@ -21,6 +21,6 @@ void startProgram ()
   // testingForwardBackward ();
   // testingTrain ();
 
-  int status = testingTrain ();
+  int status = testingMNISTData ();
   exitProgram (0);
 }

@@ -391,34 +391,6 @@ void softmax (int size, float * logits, float * probabilities)
   }
 }
 
-void softmaxDebug (int size, float * logits, float * probabilities)
-{
-  for (int i = 0; i < 10; i++)
-  {
-    printUnsignedInteger(* ((unsigned * ) & logits[i]));
-    print("\n");
-  }
-  float max_logit, sum;
-  sum = 1e-8f;
-  max_logit = logits[0];
-  for (int logits_index = 1; logits_index < size; logits_index++) 
-  {
-    if (logits[logits_index] > max_logit)
-    {
-      max_logit = logits[logits_index];
-    }
-  }
-  for (int logits_index = 0; logits_index < size; logits_index++)
-  {
-    probabilities[logits_index] = exponential(logits[logits_index] - max_logit);
-    sum += probabilities[logits_index];
-  }
-  for (int logits_index = 0; logits_index < size; logits_index++)
-  {
-    probabilities[logits_index] /= sum;
-  }
-}
-
 int floor(double x)
 {
   if (x < 0 && x != (int) x)
